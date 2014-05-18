@@ -67,7 +67,7 @@
          */
         public static function Parse(){
             $oThis = self::CreateInstanceIfNotExists();
-            $sRoot = str_replace("index.php", "", $_SERVER["SCRIPT_NAME"]);
+            $sRoot = str_replace(array("index.php", " "), array("", "%20"), $_SERVER["SCRIPT_NAME"]);//Bugfix
             $sUri = ($sRoot != "/") ? str_replace($sRoot, "", $_SERVER["REQUEST_URI"]) : substr($_SERVER["REQUEST_URI"], 1, strlen($_SERVER["REQUEST_URI"])-1);
             $aParsedRoute = explode("/", $sUri);
             $mID = (array_key_exists(1, $aParsedRoute)) ? $aParsedRoute[1] : null;
