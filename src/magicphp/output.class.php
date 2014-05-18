@@ -187,7 +187,7 @@
          * @param boolean $bForce Forcing creation
          * @return void
          */
-        public static function CreateCacheCSS($bForce){
+        public static function CreateCacheCSS($bForce = false){
             $oThis = self::CreateInstanceIfNotExists();
             
             if(count($oThis->aCSS) > 0){
@@ -232,7 +232,7 @@
          * @param boolean $bForce Forcing creation
          * @return void
          */
-        public static function CreateCacheJS($bForce){
+        public static function CreateCacheJS($bForce = false){
             $oThis = self::CreateInstanceIfNotExists();
 
             if(count($oThis->aJS) > 0){
@@ -484,7 +484,7 @@
             $oThis->ReplaceVars();
             $oThis->RemoveUndefinedVars();
             $oThis->CheckConditions();
-            $oThis->ClearList();
+            //$oThis->ClearList();
             Events::Call("BeforeSendingOutput");
                
             header('HTTP/1.1 200 OK');
