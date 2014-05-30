@@ -187,14 +187,14 @@
          * @param boolean $bForce Forcing creation
          * @return void
          */
-        public static function CreateCacheCSS($bForce = false){
+        public static function CreateCacheCSS(){
             $oThis = self::CreateInstanceIfNotExists();
             
             if(count($oThis->aCSS) > 0){
                 $sCacheFilename = Storage::Join("dir.cache", strtolower($oThis->sNamespace).".css");
                 Storage::Set("cache.css", Storage::Join("route.root", "cache/".strtolower($oThis->sNamespace).".css"));
   
-                if(!file_exists($sCacheFilename) || $bForce || Storage::Get("debug", false)){
+                if(!file_exists($sCacheFilename) || Storage::Get("debug", false)){
                     $sBuffer = "";
 
                     foreach($oThis->aCSS as $sAppendBuffer)
@@ -232,14 +232,14 @@
          * @param boolean $bForce Forcing creation
          * @return void
          */
-        public static function CreateCacheJS($bForce = false){
+        public static function CreateCacheJS(){
             $oThis = self::CreateInstanceIfNotExists();
 
             if(count($oThis->aJS) > 0){
                 $sCacheFilename = Storage::Join("dir.cache", strtolower($oThis->sNamespace).".js");
                 Storage::Set("cache.js", Storage::Join("route.root", "cache/".strtolower($oThis->sNamespace).".js"));
 
-                if(!file_exists($sCacheFilename) || $bForce || Storage::Get("debug", false)){
+                if(!file_exists($sCacheFilename) || Storage::Get("debug", false)){
                     $sBuffer = "";
 
                     foreach($oThis->aJS as $sAppendBuffer)
@@ -534,17 +534,19 @@
          */
         public static function ClearList(){
             $oThis = self::CreateInstanceIfNotExists();
-            if(preg_match('/{list\:(.*?)}/', $oThis->sBuffer, $aMatches) == 1)
-                $sListName = $aMatches[1];
+            
+            if(preg_match('/{list\:(.*?)}/', $oThis->sBuffer, $aMatches) == 1){
+                $sListName = $aMatches[1]; 
 
-            $iStart = strpos($oThis->sBuffer, "{list:{$sListName}}");
+                $iStart = strpos($oThis->sBuffer, "{list:{$sListName}}");
 
-            if($iStart > 0)
-                $iEnd = strpos($oThis->sBuffer, "{end}", $iStart);
+                if($iStart > 0)
+                    $iEnd = strpos($oThis->sBuffer, "{end}", $iStart);
 
-            if($iStart > 0 && $iEnd > 0)
-                $sList = substr($oThis->sBuffer, $iStart, $iEnd-$iStart)."{end}";
+                if($iStart > 0 && $iEnd > 0)
+                    $sList = substr($oThis->sBuffer, $iStart, $iEnd-$iStart)."{end}";
 
-            $oThis->sBuffer = str_replace($sList, "", $oThis->sBuffer);
+                $oThis->sBuffer = str_replace($sList, "", $oThis->sBuffer);
+            }
         }
     }
