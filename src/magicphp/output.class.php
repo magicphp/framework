@@ -504,6 +504,7 @@
          * Function to minify output
          * 
          * @static
+         * @author Jonathan Lamim
          * @access public
          * @param string $sBuffer HTML
          * @return  void
@@ -529,6 +530,7 @@
          * Function to remove empty lists inside template
          * 
          * @static
+         * @author Jonathan Lamim
          * @access public
          * @return void
          */
