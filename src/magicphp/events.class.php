@@ -44,7 +44,8 @@
          */
         public static function Call($sName, $aParams = null){
             $oThis = self::CreateInstanceIfNotExists();
-             
+            $sName = str_replace("/", "_", $sName);//Bugfix
+                        
             if(array_key_exists($sName, $oThis->aEvents)){
                 switch($oThis->aEvents[$sName]["type"]){
                     case "perroute":
@@ -72,6 +73,7 @@
          */
         public static function Set($sName, $fCallback){
             $oThis = self::CreateInstanceIfNotExists();
+            $sName = str_replace("/", "_", $sName);//Bugfix
             $oThis->aEvents[$sName] = array("type" => "default", "func" => $fCallback);
         }
         
@@ -88,6 +90,7 @@
          */
         public static function SetPerRoute($sName, $sRoute, $sMethod, $fCallback){
             $oThis = self::CreateInstanceIfNotExists();
+            $sName = str_replace("/", "_", $sName);//Bugfix
             $oThis->aEvents[$sMethod."_".$sRoute."_".$sName] = array("type" => "perroute", "func" => $fCallback, "route" => $sRoute, "method" => $sMethod);
         }
         
@@ -101,6 +104,7 @@
          */
         public static function Has($sName){
             $oThis = self::CreateInstanceIfNotExists();
+            $sName = str_replace("/", "_", $sName);//Bugfix
             return array_key_exists($sName, $oThis->aEvents);
         }
     }
