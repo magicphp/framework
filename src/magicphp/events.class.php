@@ -44,14 +44,15 @@
          */
         public static function Call($sName, $aParams = null){
             $oThis = self::CreateInstanceIfNotExists();
-            $sName = str_replace("/", "_", $sName);//Bugfix
+            $sName = strtolower(str_replace(array("/", "\\", "--"), "-", $sName));//Bugfix
                         
             if(array_key_exists($sName, $oThis->aEvents)){
                 switch($oThis->aEvents[$sName]["type"]){
                     case "perroute":
-                        $sRoute = $oThis->aEvents[$sName]["method"]."_".$oThis->aEvents[$sName]["route"];
+                        $sCurrentRoute = strtolower(str_replace(array("/", "\\", "--"), "-", Storage::Get("route")));//Bugfix
+                        $sRoute = strtolower($oThis->aEvents[$sName]["method"]."_".$oThis->aEvents[$sName]["route"]);
                         
-                        if($sRoute == Storage::Get("route"))
+                        if($sRoute == $sCurrentRoute)
                             return call_user_func($oThis->aEvents[$sName]["func"], $aParams);
                     break;
                     case "default": return call_user_func($oThis->aEvents[$sName]["func"], $aParams); break;
@@ -73,7 +74,7 @@
          */
         public static function Set($sName, $fCallback){
             $oThis = self::CreateInstanceIfNotExists();
-            $sName = str_replace("/", "_", $sName);//Bugfix
+            $sName = strtolower(str_replace(array("/", "\\", "--"), "-", $sName));//Bugfix
             $oThis->aEvents[$sName] = array("type" => "default", "func" => $fCallback);
         }
         
@@ -90,8 +91,8 @@
          */
         public static function SetPerRoute($sName, $sRoute, $sMethod, $fCallback){
             $oThis = self::CreateInstanceIfNotExists();
-            $sName = str_replace("/", "_", $sName);//Bugfix
-            $oThis->aEvents[$sMethod."_".$sRoute."_".$sName] = array("type" => "perroute", "func" => $fCallback, "route" => $sRoute, "method" => $sMethod);
+            $sRoute = strtolower(str_replace(array("/", "\\", "--"), "-", $sRoute));//Bugfix
+            $oThis->aEvents[strtolower($sMethod."_".$sRoute."_".$sName)] = array("type" => "perroute", "func" => $fCallback, "route" => $sRoute, "method" => $sMethod);
         }
         
         /**
@@ -104,7 +105,7 @@
          */
         public static function Has($sName){
             $oThis = self::CreateInstanceIfNotExists();
-            $sName = str_replace("/", "_", $sName);//Bugfix
+            $sName = strtolower(str_replace(array("/", "\\", "--"), "-", $sName));//Bugfix        
             return array_key_exists($sName, $oThis->aEvents);
         }
     }
