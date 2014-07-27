@@ -79,6 +79,32 @@
                 Storage::Set("module.".$this->sModuleName.".shell.tpl", $this->sModuleDiretory . "shell" . SP . "tpl" . SP);
                 Storage::Set("module.".$this->sModuleName.".shell.js", $this->sModuleDiretory . "shell" . SP . "js" . SP);
                 Storage::Set("module.".$this->sModuleName.".shell.img", $this->sModuleDiretory . "shell" . SP . "img" . SP);
+            
+                //Loading submodules
+                if(is_dir($this->sModuleDiretory  . "modules")){
+                    $aModulesDirectories = glob(($this->sModuleDiretory . "modules" . SP . "*"), GLOB_ONLYDIR);
+
+                    foreach($aModulesDirectories as $sModuleDiretory){
+                        if(file_exists($sModuleDiretory . SP . "status.txt"))
+                            $bStatus = (intval(file_get_contents($sModuleDiretory . SP . "status.txt")) == 1);
+                        else
+                            $bStatus = false;
+
+                        if($bStatus){
+                            if(file_exists($sModuleDiretory . SP . "settings.php") && $bStatus)
+                                require_once($sModuleDiretory . SP . "settings.php");       
+
+                            if(file_exists($sModuleDiretory . SP . "include.php") && $bStatus)
+                                require_once($sModuleDiretory . SP . "include.php");  
+
+                            if(file_exists($sModuleDiretory . SP . "routes.php") && $bStatus)
+                                require_once($sModuleDiretory . SP . "routes.php");
+
+                            if(file_exists($sModuleDiretory . SP . "events.php") && $bStatus)
+                                require_once($sModuleDiretory . SP . "events.php");
+                        }
+                    }
+                }
             }            
         }
     }
