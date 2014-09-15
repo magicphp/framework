@@ -144,7 +144,7 @@
                     }
 
                     $bCall = true; 
-                    Storage::Set("route", $sRoute);
+                    Storage::Set("route.request", $sRoute);
 
                     if(is_array($fFunc)){
                         if(is_array($fFunc[1]))
