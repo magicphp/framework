@@ -74,7 +74,6 @@
             
             if($bStatus){
                 Storage::SetArray("class.list", "module.".$this->sModuleName, $this->sModuleDiretory . "core" . SP);
-<<<<<<< HEAD
                 
                 //Diretory Paths
                 Storage::Set("app.".$this->sModuleName.".shell.css", $this->sModuleDiretory . "shell" . SP . "css" . SP);
@@ -87,21 +86,10 @@
                 Storage::Set("virtual.".$this->sModuleName.".shell.tpl", Storage::Join("route.root", "app/" . $this->sModuleName . "/shell/tpl/"));
                 Storage::Set("virtual.".$this->sModuleName.".shell.js", Storage::Join("route.root", "app/" . $this->sModuleName . "/shell/js/"));
                 Storage::Set("virtual.".$this->sModuleName.".shell.css", Storage::Join("route.root", "app/" . $this->sModuleName . "/shell/css/"));
-            
-                //Loading submodules
-                if(is_dir($this->sModuleDiretory  . "modules")){
-                    $aModulesDirectories = glob(($this->sModuleDiretory . "app" . SP . "*"), GLOB_ONLYDIR);
-=======
-                Storage::Set("module.".$this->sModuleName.".shell", $this->sModuleDiretory . "shell" . SP);
-                Storage::Set("module.".$this->sModuleName.".shell.css", $this->sModuleDiretory . "shell" . SP . "css" . SP);
-                Storage::Set("module.".$this->sModuleName.".shell.tpl", $this->sModuleDiretory . "shell" . SP . "tpl" . SP);
-                Storage::Set("module.".$this->sModuleName.".shell.js", $this->sModuleDiretory . "shell" . SP . "js" . SP);
-                Storage::Set("module.".$this->sModuleName.".shell.img", $this->sModuleDiretory . "shell" . SP . "img" . SP);
-            
+                        
                 //Loading submodules
                 if(is_dir($this->sModuleDiretory  . "modules")){
                     $aModulesDirectories = glob(($this->sModuleDiretory . "modules" . SP . "*"), GLOB_ONLYDIR);
->>>>>>> origin/master
 
                     foreach($aModulesDirectories as $sModuleDiretory){
                         if(file_exists($sModuleDiretory . SP . "status.txt"))
