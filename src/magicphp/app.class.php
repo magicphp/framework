@@ -1,6 +1,6 @@
 <?php
     /**
-     * Modules Controller
+     * App Controller
      * 
      * @package     MagicPHP
      * @author      André Ferreira <andrehrf@gmail.com>
@@ -8,7 +8,7 @@
      * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
      */
 
-    class Modules{
+    class App{
         /**
          * List of modules
          * 

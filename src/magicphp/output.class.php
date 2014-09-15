@@ -90,7 +90,17 @@
          * @var array
          */
         private $aJS = array();
-
+        
+        /**
+         * Object to Smarty Template Engine
+         * 
+         * @static
+         * @access public
+         * @var object 
+         */
+        public $oSmarty = null;
+        
+        public $sTemplateFilename = "";
 
         /**
          * Function to auto instance
@@ -106,6 +116,24 @@
                 $oInstance = new self();
 
             return $oInstance;
+        }
+        
+        /**
+         * Function to start Smarty Template Engine use
+         * 
+         * @static
+         * @access public
+         * @return void
+         */
+        public static function UseSmarty(){
+            $oThis = self::CreateInstanceIfNotExists();
+            
+            if(class_exists("Smarty")){
+                $oThis->oSmarty = new Smarty();
+                $oThis->oSmarty->compile_dir = Storage::Get("smarty.dir.compile");
+                $oThis->oSmarty->config_dir = Storage::Get("smarty.dir.config");
+                $oThis->oSmarty->cache_dir = Storage::Get("dir.public");
+            }
         }
 
         /**
@@ -134,18 +162,31 @@
          */
         public static function SetTemplate($sTemplateFilename, $sMasterpageFilename = null){
             $oThis = self::CreateInstanceIfNotExists();
-            $sTemplate = (file_exists($sTemplateFilename)) ? file_get_contents($sTemplateFilename) : null;
-            $sMasterpage = (file_exists($sMasterpageFilename)) ? file_get_contents($sMasterpageFilename) : null;
+            
+            if(is_object($oThis->oSmarty)){
+                if(!is_null($sMasterpageFilename)){
+                    $sContent = $oThis->oSmarty->fetch($sTemplateFilename);
+                    $oThis->oSmarty->assign('template', $sContent); 
+                    $oThis->sTemplateFilename = $sMasterpageFilename;
+                }
+                else{
+                    $oThis->sTemplateFilename = $sTemplateFilename;
+                }
+            }
+            else{
+                $sTemplate = (file_exists($sTemplateFilename)) ? file_get_contents($sTemplateFilename) : null;
+                $sMasterpage = (file_exists($sMasterpageFilename)) ? file_get_contents($sMasterpageFilename) : null;
 
-            if(!is_null($sMasterpage))
-                $oThis->sBuffer = str_replace("{\$template}", $sTemplate, $sMasterpage);
-            else
-                $oThis->sBuffer = $sTemplate;
+                if(!is_null($sMasterpage))
+                    $oThis->sBuffer = str_replace("{\$template}", $sTemplate, $sMasterpage);
+                else
+                    $oThis->sBuffer = $sTemplate;
 
-            if(Storage::Get("app.minified") && !Storage::Get("debug"))
-                $oThis->SanitizeOutput($oThis->sBuffer);
+                if(Storage::Get("app.minified") && !Storage::Get("debug"))
+                    $oThis->SanitizeOutput($oThis->sBuffer);
 
-            $oThis->IncludeTemplate();
+                $oThis->IncludeTemplate();
+            }
         }
 
         /**
@@ -191,8 +232,8 @@
             $oThis = self::CreateInstanceIfNotExists();
             
             if(count($oThis->aCSS) > 0){
-                $sCacheFilename = Storage::Join("dir.cache", strtolower($oThis->sNamespace).".css");
-                Storage::Set("cache.css", Storage::Join("route.root", "cache/".strtolower($oThis->sNamespace).".css"));
+                $sCacheFilename = Storage::Join("dir.public.assets", strtolower($oThis->sNamespace).".css");
+                Storage::Set("assets.css", Storage::Join("route.root", "public/assets/".strtolower($oThis->sNamespace).".css"));
   
                 if(!file_exists($sCacheFilename) || Storage::Get("debug", false)){
                     $sBuffer = "";
@@ -236,8 +277,8 @@
             $oThis = self::CreateInstanceIfNotExists();
 
             if(count($oThis->aJS) > 0){
-                $sCacheFilename = Storage::Join("dir.cache", strtolower($oThis->sNamespace).".js");
-                Storage::Set("cache.js", Storage::Join("route.root", "cache/".strtolower($oThis->sNamespace).".js"));
+                $sCacheFilename = Storage::Join("dir.public.assets", strtolower($oThis->sNamespace).".js");
+                Storage::Set("assets.js", Storage::Join("route.root", "public/assets/".strtolower($oThis->sNamespace).".js"));
 
                 if(!file_exists($sCacheFilename) || Storage::Get("debug", false)){
                     $sBuffer = "";
@@ -478,25 +519,38 @@
          */
         public static function Send(){
             $oThis = self::CreateInstanceIfNotExists();
-            $oThis->CreateCacheCSS();
-            $oThis->CreateCacheJS();
-            $oThis->IncludeTemplate();
-            $oThis->ReplaceVars();
-            $oThis->RemoveUndefinedVars();
-            $oThis->CheckConditions();
-            //$oThis->ClearList();
-            Events::Call("BeforeSendingOutput");
-               
-            header('HTTP/1.1 200 OK');
-            header("Content-Type: text/html; charset=" . strtoupper(Storage::Get("app.charset", "UTF-8")), true);
-
-            try{
-                //var_dump($oThis->sBuffer); die();
-                eval('?> ' . $oThis->sBuffer);
-                die();
+            
+            if(is_object($oThis->oSmarty)){
+                $oThis->CreateCacheCSS();
+                $oThis->CreateCacheJS();
+                
+                Storage::AssignSmarty($oThis->oSmarty);
+                Events::Call("BeforeSendingOutput");
+                
+                $oThis->oSmarty->display($oThis->sTemplateFilename);
             }
-            catch(Exception $e){
-                die($e->getMessage());
+            else{
+                $oThis = self::CreateInstanceIfNotExists();
+                $oThis->CreateCacheCSS();
+                $oThis->CreateCacheJS();
+                $oThis->IncludeTemplate();
+                $oThis->ReplaceVars();
+                $oThis->RemoveUndefinedVars();
+                $oThis->CheckConditions();
+                //$oThis->ClearList();
+                Events::Call("BeforeSendingOutput");
+
+                header('HTTP/1.1 200 OK');
+                header("Content-Type: text/html; charset=" . strtoupper(Storage::Get("app.charset", "UTF-8")), true);
+
+                try{
+                    //var_dump($oThis->sBuffer); die();
+                    eval('?> ' . $oThis->sBuffer);
+                    die();
+                }
+                catch(Exception $e){
+                    die($e->getMessage());
+                }
             }
         }
 

@@ -7,7 +7,7 @@
      * @link        https://github.com/magicphp/framework MagicPHP(tm)
      * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
      */
-
+    
     class Storage{
         /**
          * Storage list
@@ -133,5 +133,40 @@
         public static function GetList(){
             $oThis = self::CreateInstanceIfNotExists();
             return $oThis->aList;
+        }
+        
+        /**
+         * Function to transform the variables Storage variables in Smarty Template Engine
+         * 
+         * @static
+         * @access public
+         * @param Smarty $oSmarty
+         * @return void
+         */
+        public static function AssignSmarty(&$oSmarty){
+            $oThis = self::CreateInstanceIfNotExists();
+            $aStorage = Storage::GetList();
+            
+            $oSmartyVars = array();
+            
+            function ReturnSubKeys($sKeyRoot, $mValue){
+                $aKey = explode(".", $sKeyRoot);
+                $aArray = array();
+
+                if(count($aKey) > 1){
+                    $aSubKeys = ReturnSubKeys(str_replace($aKey[0].".", "", $sKeyRoot),$mValue);                                                   
+                    $aArray[$aSubKeys["key"]] = @(is_array($aArray[$aSubKeys["key"]]) ? @array_merge_recursive($aArray[$aSubKeys["key"]], $aSubKeys["result"]) : $aSubKeys["result"]);
+                    return array("result" => $aArray, "key" => $aKey[0]);
+                }
+                else{
+                    return array("result" => $mValue, "key" => $sKeyRoot);
+                }
+            }
+            
+            foreach($aStorage as $sKey => $mValue){
+                $aResult = ReturnSubKeys($sKey, $mValue);
+                $oSmartyVars[$aResult["key"]] = @(is_array($oSmartyVars[$aResult["key"]]) ? @array_merge_recursive($oSmartyVars[$aResult["key"]], $aResult["result"]) : $aResult["result"]);
+                $oSmarty->assign($aResult["key"], $oSmartyVars[$aResult["key"]]); 
+            }
         }
     }

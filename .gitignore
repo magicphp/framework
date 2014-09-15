@@ -2,3 +2,4 @@
 composer.phar
 composer.lock
 Thumbs.db
+/nbproject/private/
