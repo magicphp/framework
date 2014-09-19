@@ -76,6 +76,7 @@
                 Storage::SetArray("class.list", "module.".$this->sModuleName, $this->sModuleDiretory . "core" . SP);
                 
                 //Diretory Paths
+                Storage::Set("app.".$this->sModuleName, $this->sModuleDiretory);
                 Storage::Set("app.".$this->sModuleName.".shell.css", $this->sModuleDiretory . "shell" . SP . "css" . SP);
                 Storage::Set("app.".$this->sModuleName.".shell.tpl", $this->sModuleDiretory . "shell" . SP . "tpl" . SP);
                 Storage::Set("app.".$this->sModuleName.".shell.js", $this->sModuleDiretory . "shell" . SP . "js" . SP);
