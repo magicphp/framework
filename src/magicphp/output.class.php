@@ -58,7 +58,6 @@
         /**
          * Namespace output
          *
-         * @static
          * @access private
          * @var string
          */
@@ -67,7 +66,6 @@
         /**
          * Buffer
          *
-         * @static
          * @access private
          * @var string
          */
@@ -76,7 +74,6 @@
         /**
          * List of CSS files output
          *
-         * @static
          * @access private
          * @var array
          */
@@ -85,7 +82,6 @@
         /**
          * List of Javascript files output
          *
-         * @static
          * @access private
          * @var array
          */
@@ -94,12 +90,17 @@
         /**
          * Object to Smarty Template Engine
          * 
-         * @static
          * @access public
          * @var object 
          */
         public $oSmarty = null;
         
+        /**
+         * Path to template file
+         * 
+         * @access public
+         * @var string 
+         */
         public $sTemplateFilename = "";
 
         /**

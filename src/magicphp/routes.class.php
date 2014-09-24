@@ -12,7 +12,6 @@
         /**
          * Routes list
          * 
-         * @static
          * @access private
          * @var array 
          */
@@ -21,7 +20,6 @@
         /**
          * Sets the frontend overload
          * 
-         * @static
          * @access private
          * @var boolean 
          */

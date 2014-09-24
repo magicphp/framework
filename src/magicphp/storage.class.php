@@ -12,7 +12,6 @@
         /**
          * Storage list
          * 
-         * @static
          * @access private
          * @var array 
          */
