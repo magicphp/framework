@@ -36,6 +36,7 @@
         /**
          * Function to append a module
          * 
+         * @static
          * @param string $sName Module name
          * @param string $sDirectory Path of module
          * @return \Module
@@ -51,5 +52,17 @@
                 $oThis->aModules[$sName] = $oModule;
                 return $oModule;
             }
+        }
+        
+        /**
+         * Function to get modules list
+         * 
+         * @static
+         * @access public
+         * @return array
+         */
+        public static function GetModules(){
+            $oThis = self::CreateInstanceIfNotExists();
+            return $oThis->aModules;
         }
     }
