@@ -253,4 +253,36 @@
            $oThis = self::CreateInstanceIfNotExists();
            return  $oThis->aRoutes;
         }
+        
+        /**
+         * Function to create default routes CRUD
+         * 
+         * @static
+         * @access public
+         * @param string $sRouteName
+         * @param string $sController
+         * @return void
+         */
+        public static function CRUD($sRouteName, $sController){
+            if(method_exists($sController, "Index"))
+                Routes::Set($sRouteName, "GET", $sController . "::Index");
+            
+            if(method_exists($sController, "Create"))
+                Routes::Set($sRouteName . "/create", "GET", $sController . "::Create");
+            
+            if(method_exists($sController, "Insert"))
+                Routes::Set($sRouteName, "POST", $sController . "::Insert");
+            
+            if(method_exists($sController, "Show"))
+                Routes::Set($sRouteName . "/{id}", "GET", $sController . "::Show");
+            
+            if(method_exists($sController, "Edit"))
+                Routes::Set($sRouteName . "/{id}/edit", "GET", $sController . "::Edit");
+            
+            if(method_exists($sController, "Update"))
+                Routes::Set($sRouteName . "/{id}", "PUT", $sController . "::Update");
+            
+            if(method_exists($sController, "Destroy"))
+                Routes::Set($sRouteName . "/{id}", "DELETE", $sController . "::Destroy");
+        }
     }
