@@ -272,12 +272,9 @@
             
             if(method_exists($sController, "Insert"))
                 Routes::Set($sRouteName, "POST", $sController . "::Insert");
-            
-            if(method_exists($sController, "Show"))
-                Routes::Set($sRouteName . "/{id}", "GET", $sController . "::Show");
-            
+                  
             if(method_exists($sController, "Edit"))
-                Routes::Set($sRouteName . "/{id}/edit", "GET", $sController . "::Edit");
+                Routes::Set($sRouteName . "/{id}", "GET", $sController . "::Edit");
             
             if(method_exists($sController, "Update"))
                 Routes::Set($sRouteName . "/{id}", "PUT", $sController . "::Update");
