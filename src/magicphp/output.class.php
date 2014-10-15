@@ -476,8 +476,8 @@
             $oThis = self::CreateInstanceIfNotExists();
 
             if(array_key_exists($iCode, $oThis->aHTTPStatus)){
-                header($oThis->aHTTPStatus[$iCode]);
-                header("Connection: close");
+                @header($oThis->aHTTPStatus[$iCode]);
+                @header("Connection: close");
                 die();
             }
         }
@@ -493,8 +493,8 @@
         public static function Redirect($sUrl){
             $oThis = self::CreateInstanceIfNotExists();
 
-            header($oThis->aHTTPStatus[301]);
-            header("Location: ".$sUrl);
+            @header($oThis->aHTTPStatus[301]);
+            @header("Location: ".$sUrl);
             die();
         }
 
@@ -541,8 +541,8 @@
                 //$oThis->ClearList();
                 Events::Call("BeforeSendingOutput");
 
-                header('HTTP/1.1 200 OK');
-                header("Content-Type: text/html; charset=" . strtoupper(Storage::Get("app.charset", "UTF-8")), true);
+                @header('HTTP/1.1 200 OK');
+                @header("Content-Type: text/html; charset=" . strtoupper(Storage::Get("app.charset", "UTF-8")), true);
 
                 try{
                     //var_dump($oThis->sBuffer); die();
