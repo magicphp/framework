@@ -78,14 +78,12 @@
                 if(!$bResult)
                     Bootstrap::AutoLoad("main");
             }
+            
             $sUri = preg_replace("/\?.*$/", "", $sUri);//Removendo path
             $sUri = preg_replace("/\#.*$/", "", $sUri);//Removendo path
             $bCall = false;
 
-
-            $aIdent = array("int" => "\d+",
-                            "str" => "\w+",
-                            "flt" => "[\d.]+");
+            $aIdent = array("int" => "\d+", "str" => "\w+", "flt" => "[\d.]+");
 
             foreach($oThis->aRoutes as $sRoute => $fFunc){  
                 if (preg_match_all('/{(?P<field>\w+)(:((?P<type>\w{3,3})|regex\((?P<regex>.*)\)))?(:(?P<notnull>notnull))?}/i',$sRoute, $aMatches)){
@@ -116,22 +114,10 @@
                             }
                         } 
                     }
-                }else{
+                }
+                else{
                     $sRoute = str_replace('/', '\/', $sRoute);
                 }                    
-
-                /*$sBaseFolder = substr($sRoot, 0,strlen($sRoot)-1);
-                if ($sBaseFolder){
-                    if (substr($sBaseFolder, 0,1) == '/'){
-                        $sBaseFolder = substr($sBaseFolder, 1, strlen($sBaseFolder)-1);
-                    }
-                    $sBaseFolder = str_replace('/', '\/', $sBaseFolder);
-                    preg_match('/^[^_]+/', $sRoute, $sMatch);
-                    if ($sMatch){
-                        $sRoute = str_replace($sMatch[0]."_", "", $sRoute);
-                        $sRoute = $sMatch[0]."_".$sBaseFolder.$sRoute;
-                    }
-                }*/
                 
                 if(preg_match_all("/^".$sRoute."\/?$/i", $sMethod."_".$sUri, $aMatches)){
                     $aParams = array();
@@ -213,9 +199,10 @@
          * 
          * @static
          * @access public
-         * @return void
+         * @param boolean $bReturn
+         * @return mixed
          */
-        public static function RestParams(){
+        public static function RestParams($bReturn = false){
             $sBuffer = file_get_contents("php://input");
             $aParams = explode("&", $sBuffer);
             $aReturn = array();
@@ -224,9 +211,16 @@
                 @list($mKey, $mValue) = @explode("=", $sParam);
                 $mValue = urldecode($mValue);
                 
-                if(!empty($mKey) && !empty($mValue))
+                if(!empty($mKey) && !empty($mValue)){
                     Storage::Set(strtolower(Routes::Restful()).".".$mKey, $mValue);
+                    
+                    if($bReturn)
+                        $aReturn[strtolower(Routes::Restful()).".".$mKey] = $mValue;
+                }
             }
+            
+            if($bReturn)
+                return $aReturn;
         }
         
         /**
@@ -267,19 +261,16 @@
             if(method_exists($sController, "Index"))
                 Routes::Set($sRouteName, "GET", $sController . "::Index");
             
-            if(method_exists($sController, "Create"))
-                Routes::Set($sRouteName . "/create", "GET", $sController . "::Create");
-            
-            if(method_exists($sController, "Insert"))
-                Routes::Set($sRouteName, "POST", $sController . "::Insert");
+            if(method_exists($sController, "CRUDInsert"))
+                Routes::Set($sRouteName, "POST", array($sController . "::CRUDInsert", new $sController));
                   
-            if(method_exists($sController, "Edit"))
-                Routes::Set($sRouteName . "/{id}", "GET", $sController . "::Edit");
+            if(method_exists($sController, "CRUDEdit"))
+                Routes::Set($sRouteName . "/{id}", "GET", array($sController . "::CRUDEdit", new $sController));
             
-            if(method_exists($sController, "Update"))
-                Routes::Set($sRouteName . "/{id}", "PUT", $sController . "::Update");
+            if(method_exists($sController, "CRUDUpdate"))
+                Routes::Set($sRouteName . "/{id}", "PUT", array($sController . "::CRUDUpdate", new $sController));
             
-            if(method_exists($sController, "Destroy"))
-                Routes::Set($sRouteName . "/{id}", "DELETE", $sController . "::Destroy");
+            if(method_exists($sController, "CRUDDestroy"))
+                Routes::Set($sRouteName . "/{id}", "DELETE", array($sController . "::CRUDDestroy", new $sController));
         }
     }
